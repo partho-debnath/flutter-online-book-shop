@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../providers/cart.dart';
 import '../widgets/cart_item.dart';
 import '../providers/orders.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static const routesName = 'cart-screen';
   const CartScreen({super.key});
 
   @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  @override
   Widget build(BuildContext context) {
+    final String userId = FirebaseAuth.instance.currentUser!.uid;
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
@@ -36,7 +43,7 @@ class CartScreen extends StatelessWidget {
                     label: Text('${cart.totalAmount.toStringAsFixed(2)} Tk'),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  OderButton(cart: cart)
+                  OderButton(userId: userId, cart: cart, context: context),
                 ],
               ),
             ),
@@ -64,9 +71,13 @@ class CartScreen extends StatelessWidget {
 class OderButton extends StatefulWidget {
   const OderButton({
     super.key,
+    required this.userId,
     required this.cart,
+    required this.context,
   });
 
+  final BuildContext context;
+  final String userId;
   final Cart cart;
 
   @override
@@ -74,24 +85,116 @@ class OderButton extends StatefulWidget {
 }
 
 class _OderButtonState extends State<OderButton> {
-  var isLoad = false;
+  var isLoading = false;
+  late final TextEditingController _nameController;
+  late final TextEditingController _addressController;
+  late final TextEditingController _phoneNoController;
+
+  @override
+  void initState() {
+    _nameController = TextEditingController();
+    _addressController = TextEditingController();
+    _phoneNoController = TextEditingController();
+    super.initState();
+  }
+
+  void _startTransaction(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: SingleChildScrollView(
+            child: Card(
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: 10,
+                  right: 10,
+                  top: 10,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+                ),
+                width: 300,
+                child: Column(
+                  children: <Widget>[
+                    TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        label: Text('Receiver\'s Name'),
+                        hintText: 'Name',
+                      ),
+                    ),
+                    TextField(
+                      controller: _addressController,
+                      maxLines: 5,
+                      decoration: const InputDecoration(
+                        label: Text('Address'),
+                        hintText:
+                            'District Name:\nThana: \nBlock:\nRoadNo:\nHouseNo:',
+                      ),
+                    ),
+                    TextField(
+                      controller: _phoneNoController,
+                      maxLength: 11,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        label: Text('Phone Number'),
+                        hintText: '01xxxxxxxxx',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        String name = _nameController.text.trim();
+                        String address = _addressController.text.trim();
+                        String phone = _phoneNoController.text.trim();
+                        if (name != '' || address != '' || phone != '') {
+                          print(name + " " + address + " " + phone);
+                          await Provider.of<Orders>(context, listen: false)
+                              .addOrder(
+                            widget.userId,
+                            widget.cart.items.values.toList(),
+                            widget.cart.totalAmount,
+                            name,
+                            address,
+                            phone,
+                          );
+                          Future.delayed(Duration.zero).then((_) {
+                            Navigator.of(context).pop();
+                          });
+                          setState(() {
+                            isLoading = false;
+                          });
+                          widget.cart.clear();
+                        }
+                      },
+                      child: const Text('Confirm Order'),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: (widget.cart.totalAmount <= 0 || isLoad == true)
+      onPressed: (widget.cart.totalAmount <= 0 || isLoading == true)
           ? null
-          : () async {
+          : () {
               setState(() {
-                isLoad = true;
+                isLoading = true;
               });
-              await Provider.of<Orders>(context, listen: false).addOrder(
-                  widget.cart.items.values.toList(), widget.cart.totalAmount);
-              setState(() {
-                isLoad = false;
-              });
-              widget.cart.clear();
+              _startTransaction(widget.context);
             },
-      child: isLoad == true
+      child: isLoading == true
           ? const SizedBox(
               height: 15,
               width: 15,

@@ -7,27 +7,46 @@ import './product.dart';
 
 class ProductsProvider with ChangeNotifier {
   static const String domain =
-      'https://fluttergedgetsstore-default-rtdb.firebaseio.com/products.json';
-
-  ProductsProvider() {
-    // addData();
-  }
+      'https://filesharingbd.pythonanywhere.com/bookapi/';
 
   Future<void> fetchProducts() async {
     var url = Uri.parse(domain);
 
+    // try {
+    //   final List<Product> tempProducts = [];
+    //   var response = await http.get(url);
+    //   final loardProducts = json.decode(response.body) as Map<String, dynamic>;
+    //   loardProducts.forEach((productId, productData) {
+    //     print('$productId   ${productData['id']}');
+    //     tempProducts.add(Product(
+    //       id: productData['id'],
+    //       title: productData['title'],
+    //       description: productData['description'],
+    //       imageUrl: productData['imageUrl'],
+    //       price: productData['price'],
+    //     ));
+    //   });
+    //   _items = tempProducts;
+    //   notifyListeners();
+    // } catch (error) {
+    //   throw (error);
+    // }
+
     try {
       final List<Product> tempProducts = [];
       var response = await http.get(url);
-      final loardProducts = json.decode(response.body) as Map<String, dynamic>;
-      loardProducts.forEach((productId, productData) {
-        print('$productId   ${productData['id']}');
+      final loardProducts = json.decode(response.body);
+      loardProducts.forEach((productData) {
         tempProducts.add(Product(
-          id: productData['id'],
-          title: productData['title'],
+          id: '${productData['id']}',
+          title: productData['name'],
+          edition: productData['edition'],
+          author: productData['author'],
           description: productData['description'],
-          imageUrl: productData['imageUrl'],
-          price: productData['price'],
+          imageUrl: productData['cover'],
+          image1: productData['cover'],
+          image2: productData['cover'],
+          price: productData['price'] * 1.0,
         ));
       });
       _items = tempProducts;

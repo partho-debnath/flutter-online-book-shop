@@ -22,21 +22,21 @@ class HomeScreen extends StatelessWidget {
           case ConnectionState.none:
             return const Text('None');
           case ConnectionState.waiting:
-            return const Text('Waiting....');
+            return const LoginScreen();
           case ConnectionState.active:
             return const Text('Active');
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
             if (user != null) {
               // debugPrint('--Email is Verified');
-              if (user.emailVerified == true) {
-                // debugPrint('--You are Verified User.');
-                // debugPrint('--$user');
-                return const NotesScreen();
-              } else {
-                // debugPrint('--You Need Verify  Your Email First.');
-                return const VerifyEmailScreen();
-              }
+              // if (user != null) {
+              // debugPrint('--You are Verified User.');
+              // debugPrint('--$user');
+              return const NotesScreen();
+              // } else {
+              //   // debugPrint('--You Need Verify  Your Email First.');
+              //   // return const VerifyEmailScreen();
+              // }
             } else {
               return const LoginScreen();
             }

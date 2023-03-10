@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: 'Password',
               errorText: _userNotFound == false
                   ? null
-                  : 'Emain or Password Incorrect.',
+                  : 'Email or Password Incorrect.',
             ),
           ),
           const SizedBox(

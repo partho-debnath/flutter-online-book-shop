@@ -81,6 +81,19 @@ class _NotesScreenState extends State<NotesScreen> {
       appBar: AppBar(
         title: const Text('Main UI'),
         actions: <Widget>[
+          Consumer<Cart>(
+            builder: (cntxt, cartData, ch) => MyBadge(
+              value: cartData.itemCount.toString(),
+              color: Colors.amber,
+              child: ch as Widget,
+            ),
+            child: IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routesName);
+              },
+              icon: const Icon(Icons.shopping_cart),
+            ),
+          ),
           PopupMenuButton<SelectedOptions>(
             onSelected: (SelectedOptions selectedOption) async {
               switch (selectedOption) {
@@ -134,19 +147,6 @@ class _NotesScreenState extends State<NotesScreen> {
               ];
             },
             icon: const Icon(Icons.more_vert),
-          ),
-          Consumer<Cart>(
-            builder: (cntxt, cartData, ch) => MyBadge(
-              value: cartData.itemCount.toString(),
-              color: Colors.amber,
-              child: ch as Widget,
-            ),
-            child: IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(CartScreen.routesName);
-              },
-              icon: const Icon(Icons.shopping_cart),
-            ),
           ),
         ],
       ),

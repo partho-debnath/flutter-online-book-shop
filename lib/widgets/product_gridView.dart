@@ -19,7 +19,7 @@ class GridViewProducts extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 5,
           mainAxisSpacing: 5,
-          childAspectRatio: 3 / 2,
+          childAspectRatio: 3 / 3,
         ),
         itemBuilder: (cntxt, index) {
           return ChangeNotifierProvider.value(

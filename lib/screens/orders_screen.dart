@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../providers/orders.dart' show Orders;
 import '../widgets/order_item.dart';
@@ -19,7 +20,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
   @override
   void didChangeDependencies() {
     if (initial == true) {
-      Provider.of<Orders>(context).fetchOrders();
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      Provider.of<Orders>(context).fetchOrders(userId);
       initial = false;
     }
     super.didChangeDependencies();
