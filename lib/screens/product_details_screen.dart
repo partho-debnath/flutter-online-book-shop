@@ -25,17 +25,6 @@ class ProductDetailsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: 300,
-              width: double.infinity,
-              child: Image.network(
-                selectedProduct.imageUrl,
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
             Container(
               margin: const EdgeInsets.all(8.0),
               padding: const EdgeInsets.all(8.0),
@@ -131,7 +120,18 @@ class ProductDetailsScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-            )
+            ),
+            SizedBox(
+              height: 300,
+              width: double.infinity,
+              child: Image.network(
+                selectedProduct.imageUrl,
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
           ],
         ),
       ),

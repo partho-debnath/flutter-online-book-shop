@@ -14,11 +14,16 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  late final TextEditingController _confirmPasswordController;
+  bool _isPasswordHide = true;
+  bool _isConfirmPasswordHide = true;
+  bool _passwordNotMatch = false;
 
   @override
   void initState() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
 
     super.initState();
   }
@@ -44,54 +49,108 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       appBar: AppBar(
         title: const Text('Registration Screen'),
       ),
-      body: Column(
-        children: [
-          TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              label: Text('E-mail'),
-              hintText: 'Email',
-            ),
-          ),
-          TextField(
-            controller: _passwordController,
-            // obscureText: true,
-            decoration: const InputDecoration(
-              label: Text('Password'),
-              hintText: 'Password',
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final email = _emailController.text;
-              final password = _passwordController.text;
-              if (email.length > 5 || password.length > 5) {
-                debugPrint('Register ok---------');
-                try {
-                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                      email: email, password: password);
-                } on FirebaseAuthException catch (e) {
-                  if (e.code == 'weak-password') {
-                    debugPrint(
-                        'This Password is weak-password, Enter Strong Password.');
-                  } else if (e.code == 'email-already-in-use') {
-                    debugPrint('Email Already in Use');
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 30),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  label: Text('E-mail'),
+                  hintText: 'Email',
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextField(
+                controller: _passwordController,
+                obscureText: _isPasswordHide,
+                decoration: InputDecoration(
+                  label: const Text('Password'),
+                  hintText: 'Password',
+                  errorText:
+                      _passwordNotMatch == false ? null : 'Password not Match.',
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordHide = !_isPasswordHide;
+                      });
+                    },
+                    icon: Icon(_isPasswordHide == false
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextField(
+                controller: _confirmPasswordController,
+                obscureText: _isConfirmPasswordHide,
+                decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: Icon(_isConfirmPasswordHide == false
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isConfirmPasswordHide = !_isConfirmPasswordHide;
+                        });
+                      },
+                    ),
+                    label: const Text('Confirm Password'),
+                    hintText: 'Confirm Password',
+                    errorText: _passwordNotMatch == false
+                        ? null
+                        : 'Password not Match.'),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final email = _emailController.text;
+                  final password = _passwordController.text;
+                  final confirmPassword = _confirmPasswordController.text;
+                  if (password != confirmPassword) {
+                    setState(() {
+                      _passwordNotMatch = true;
+                    });
+                    return;
                   }
-                  debugPrint(e.code);
-                }
-              }
-            },
-            child: const Text('Register'),
+                  if (email.length > 5 || password.length > 5) {
+                    debugPrint('Register ok---------');
+                    try {
+                      await FirebaseAuth.instance
+                          .createUserWithEmailAndPassword(
+                              email: email, password: password);
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'weak-password') {
+                        debugPrint(
+                            'This Password is weak-password, Enter Strong Password.');
+                      } else if (e.code == 'email-already-in-use') {
+                        debugPrint('Email Already in Use');
+                      }
+                      debugPrint(e.code);
+                    }
+                  }
+                },
+                child: const Text('Register'),
+              ),
+              TextButton(
+                onPressed: _goToLoginScreen,
+                child: const Text('Have an account? Login here!'),
+              )
+            ],
           ),
-          TextButton(
-            onPressed: _goToLoginScreen,
-            child: const Text('Have an account? Login here!'),
-          )
-        ],
+        ),
       ),
     );
   }

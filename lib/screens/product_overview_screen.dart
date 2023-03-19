@@ -79,7 +79,7 @@ class _NotesScreenState extends State<NotesScreen> {
     var productProvider = Provider.of<ProductsProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main UI'),
+        title: const Text('Online Book Order'),
         actions: <Widget>[
           Consumer<Cart>(
             builder: (cntxt, cartData, ch) => MyBadge(

@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   bool _userNotFound = false;
+  bool _isPasswordHide = true;
 
   @override
   void initState() {
@@ -66,89 +67,108 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: const Text('Login Screen'),
       ),
-      body: Column(
-        children: [
-          TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              label: Text('E-mail'),
-              hintText: 'Email',
-            ),
-          ),
-          TextField(
-            controller: _passwordController,
-
-            // obscureText: true,
-            decoration: InputDecoration(
-              label: const Text('Password'),
-              hintText: 'Password',
-              errorText: _userNotFound == false
-                  ? null
-                  : 'Email or Password Incorrect.',
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final email = _emailController.text;
-              final password = _passwordController.text;
-              if (email.length > 5 || password.length > 5) {
-                try {
-                  final userCredential = await FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: email, password: password);
-                  debugPrint('Login ok---------');
-                  debugPrint('User:-----: ${userCredential.user}');
-                  await Future.delayed(const Duration(seconds: 0));
-                  if (context.mounted) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      NotesScreen.routeName,
-                      (route) => false,
-                    );
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Chip(
+                label: Text('Online Book Ordering System'),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  label: Text('E-mail'),
+                  hintText: 'Email',
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextField(
+                controller: _passwordController,
+                obscureText: _isPasswordHide,
+                decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    icon: Icon(_isPasswordHide == false
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordHide = !_isPasswordHide;
+                      });
+                    },
+                  ),
+                  label: const Text('Password'),
+                  hintText: 'Password',
+                  errorText: _userNotFound == false
+                      ? null
+                      : 'Email or Password Incorrect.',
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final email = _emailController.text;
+                  final password = _passwordController.text;
+                  if (email.length > 5 || password.length > 5) {
+                    try {
+                      final userCredential = await FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                              email: email, password: password);
+                      debugPrint('Login ok---------');
+                      debugPrint('User:-----: ${userCredential.user}');
+                      await Future.delayed(const Duration(seconds: 0));
+                      if (context.mounted) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          NotesScreen.routeName,
+                          (route) => false,
+                        );
+                      }
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'user-not-found') {
+                        debugPrint('User Not Found');
+                        setState(() {
+                          _userNotFound = true;
+                        });
+                      } else if (e.code == 'wrong-password') {
+                        debugPrint('User Password is Wrong.');
+                        // await showErrorDialog(
+                        //   context,
+                        //   'Wrong credentials!',
+                        // ); // for testing
+                        setState(() {
+                          _userNotFound = true;
+                        });
+                      } else {
+                        debugPrint('Something is wrong with FirebaseAuth');
+                        await showErrorDialog(
+                          context,
+                          'Error: ${e.code}',
+                        ); // for testing
+                        debugPrint(e.code);
+                      }
+                    } catch (e) {
+                      debugPrint(
+                          '${e.runtimeType}'); // whics exception occurs , where "FirebaseAuthException"
+                    }
                   }
-                } on FirebaseAuthException catch (e) {
-                  if (e.code == 'user-not-found') {
-                    await showErrorDialog(
-                      context,
-                      'User not found!',
-                    ); // for testing
-                    debugPrint('User Not Found');
-                    setState(() {
-                      _userNotFound = true;
-                    });
-                  } else if (e.code == 'wrong-password') {
-                    debugPrint('User Password is Wrong.');
-                    await showErrorDialog(
-                      context,
-                      'Wrong credentials!',
-                    ); // for testing
-                    setState(() {
-                      _userNotFound = true;
-                    });
-                  } else {
-                    debugPrint('Something is wrong with FirebaseAuth');
-                    await showErrorDialog(
-                      context,
-                      'Error: ${e.code}',
-                    ); // for testing
-                    debugPrint(e.code);
-                  }
-                } catch (e) {
-                  debugPrint(
-                      '${e.runtimeType}'); // whics exception occurs , where "FirebaseAuthException"
-                }
-              }
-            },
-            child: const Text('Login'),
+                },
+                child: const Text('Login'),
+              ),
+              TextButton(
+                onPressed: _goToRegistrationScreen,
+                child: const Text('Not register yet? Registrer here!'),
+              )
+            ],
           ),
-          TextButton(
-            onPressed: _goToRegistrationScreen,
-            child: const Text('Not register yet? Registrer here!'),
-          )
-        ],
+        ),
       ),
     );
   }
