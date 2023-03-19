@@ -143,6 +143,8 @@ class Orders with ChangeNotifier {
             .toList(),
       });
 
+      print(uploadData);
+
       final response = await http.post(
         url,
         headers: <String, String>{

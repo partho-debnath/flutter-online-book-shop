@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../providers/user_provider.dart';
 import '../providers/cart.dart';
 import '../widgets/cart_item.dart';
 import '../providers/orders.dart';
@@ -17,7 +18,10 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
-    final String userId = FirebaseAuth.instance.currentUser!.uid;
+    // final String userId = FirebaseAuth.instance.currentUser!.uid;
+    var user = Provider.of<UserProvider>(context, listen: false).getUser();
+    // debugPrint(user.email);
+    debugPrint('User ID ${user.uID}');
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +47,7 @@ class _CartScreenState extends State<CartScreen> {
                     label: Text('${cart.totalAmount.toStringAsFixed(2)} Tk'),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  OderButton(userId: userId, cart: cart, context: context),
+                  OderButton(userId: user.uID, cart: cart, context: context),
                 ],
               ),
             ),

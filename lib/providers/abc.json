@@ -1,0 +1,22 @@
+{
+    "userName":"dddh",
+    "address":"dhdhd",
+    "phoneNo":"463524242",
+    "userId":"iheIyeUN94YepZu6u6bz8lGWldk2",
+    "amount":938.0,
+    "dateTime":"2023-03-19T22:34:04.466046",
+    "products":[
+        {
+            "id":"1",
+            "title":"Computer Programming Volume 2",
+            "quantity":1,
+            "price":255.0
+        },
+        {
+            "id":"2",
+            "title":"Java",
+            "quantity":1,
+            "price":683.0
+        }
+    ]
+}

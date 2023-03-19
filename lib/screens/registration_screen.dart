@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import '../providers/user_provider.dart';
 
 import './login_screen.dart';
 
@@ -12,15 +14,19 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   late final TextEditingController _confirmPasswordController;
+  bool _emailAlreadyExist = false;
+  bool _isNameEmpty = false;
   bool _isPasswordHide = true;
   bool _isConfirmPasswordHide = true;
   bool _passwordNotMatch = false;
 
   @override
   void initState() {
+    _nameController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
@@ -30,8 +36,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -45,6 +53,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var user = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registration Screen'),
@@ -58,11 +67,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 10,
               ),
               TextField(
+                controller: _nameController,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  label: const Text('Full Name'),
+                  hintText: 'Full Name',
+                  errorText:
+                      _isNameEmpty == true ? 'Name can\'t be Empty.' : null,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  label: Text('E-mail'),
+                decoration: InputDecoration(
+                  label: const Text('E-mail'),
                   hintText: 'Email',
+                  errorText: _emailAlreadyExist == false
+                      ? null
+                      : 'This Email already used',
                 ),
               ),
               const SizedBox(
@@ -95,30 +120,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 controller: _confirmPasswordController,
                 obscureText: _isConfirmPasswordHide,
                 decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                      icon: Icon(_isConfirmPasswordHide == false
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          _isConfirmPasswordHide = !_isConfirmPasswordHide;
-                        });
-                      },
-                    ),
-                    label: const Text('Confirm Password'),
-                    hintText: 'Confirm Password',
-                    errorText: _passwordNotMatch == false
-                        ? null
-                        : 'Password not Match.'),
+                  suffixIcon: IconButton(
+                    icon: Icon(_isConfirmPasswordHide == false
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmPasswordHide = !_isConfirmPasswordHide;
+                      });
+                    },
+                  ),
+                  label: const Text('Confirm Password'),
+                  hintText: 'Confirm Password',
+                  errorText:
+                      _passwordNotMatch == false ? null : 'Password not Match.',
+                ),
               ),
               const SizedBox(
                 height: 20,
               ),
               ElevatedButton(
                 onPressed: () async {
+                  final name = _nameController.text.trim();
                   final email = _emailController.text;
                   final password = _passwordController.text;
                   final confirmPassword = _confirmPasswordController.text;
+                  if (name.length <= 3) {
+                    setState(() {
+                      _isNameEmpty = true;
+                    });
+                  }
                   if (password != confirmPassword) {
                     setState(() {
                       _passwordNotMatch = true;
@@ -128,15 +159,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   if (email.length > 5 || password.length > 5) {
                     debugPrint('Register ok---------');
                     try {
-                      await FirebaseAuth.instance
+                      var userCredential = await FirebaseAuth.instance
                           .createUserWithEmailAndPassword(
-                              email: email, password: password);
+                        email: email,
+                        password: password,
+                      );
+                      user.addUser(name, email, userCredential.user!.uid);
+                      setState(() {
+                        _emailAlreadyExist = false;
+                        _passwordNotMatch = false;
+                      });
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'weak-password') {
                         debugPrint(
                             'This Password is weak-password, Enter Strong Password.');
                       } else if (e.code == 'email-already-in-use') {
                         debugPrint('Email Already in Use');
+                        setState(() {
+                          _emailAlreadyExist = true;
+                        });
                       }
                       debugPrint(e.code);
                     }

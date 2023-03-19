@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/user_provider.dart';
 import './registration_screen.dart';
 import 'product_overview_screen.dart';
 
@@ -63,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var user = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login Screen'),
@@ -125,6 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       debugPrint('Login ok---------');
                       debugPrint('User:-----: ${userCredential.user}');
                       await Future.delayed(const Duration(seconds: 0));
+                      user.fetchUser(email);
                       if (context.mounted) {
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           NotesScreen.routeName,

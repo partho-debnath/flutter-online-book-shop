@@ -6,9 +6,11 @@ import './screens/home_screen.dart';
 import './screens/login_screen.dart';
 import './screens/registration_screen.dart';
 import './screens/verify_email_screen.dart';
-import 'screens/product_overview_screen.dart';
+import './screens/product_overview_screen.dart';
+import './screens/user_profile_screen.dart';
 import './screens/product_details_screen.dart';
 import './screens/cart_screen.dart';
+import './providers/user_provider.dart';
 import './providers/cart.dart';
 import './providers/orders.dart';
 import './screens/orders_screen.dart';
@@ -25,6 +27,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (BuildContext context) => UserProvider(),
+        ),
         ChangeNotifierProvider(
           create: (BuildContext context) => ProductsProvider(),
         ),
@@ -76,6 +81,7 @@ class MyApp extends StatelessWidget {
               const ProductDetailsScreen(),
           CartScreen.routesName: (cntxt) => const CartScreen(),
           OrdersScreen.routeName: (cntxt) => const OrdersScreen(),
+          UserProfileScreen.routeName: (cntxt) => const UserProfileScreen(),
         },
       ),
     );

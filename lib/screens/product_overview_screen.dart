@@ -6,6 +6,7 @@ import '../providers/product_providers.dart';
 import '../providers/cart.dart';
 import './login_screen.dart';
 import './cart_screen.dart';
+import './user_profile_screen.dart';
 import '../widgets/product_gridView.dart';
 import '../widgets/my_badge.dart';
 import '../widgets/app_drawer.dart';
@@ -122,7 +123,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   }
                   break;
                 case SelectedOptions.Profile:
-                  debugPrint('--Profile');
+                  Navigator.of(context).pushNamed(UserProfileScreen.routeName);
                   break;
               }
             },
