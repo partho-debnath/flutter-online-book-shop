@@ -56,7 +56,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     var user = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registration Screen'),
+        title: const Text('Registration'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 30),
@@ -84,10 +84,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   label: const Text('E-mail'),
-                  hintText: 'Email',
+                  hintText: 'E-mail',
                   errorText: _emailAlreadyExist == false
                       ? null
-                      : 'This Email already used',
+                      : 'This Email is already in used.',
                 ),
               ),
               const SizedBox(
@@ -99,8 +99,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 decoration: InputDecoration(
                   label: const Text('Password'),
                   hintText: 'Password',
-                  errorText:
-                      _passwordNotMatch == false ? null : 'Password not Match.',
+                  errorText: _passwordNotMatch == false
+                      ? null
+                      : 'Password did not Match!',
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
@@ -132,8 +133,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                   label: const Text('Confirm Password'),
                   hintText: 'Confirm Password',
-                  errorText:
-                      _passwordNotMatch == false ? null : 'Password not Match.',
+                  errorText: _passwordNotMatch == false
+                      ? null
+                      : 'Password did not Match!',
                 ),
               ),
               const SizedBox(

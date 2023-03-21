@@ -130,16 +130,16 @@ class _NotesScreenState extends State<NotesScreen> {
             itemBuilder: (context) {
               return [
                 const PopupMenuItem<SelectedOptions>(
-                  value: SelectedOptions.Favorite,
-                  child: Text('Favourite'),
-                ),
-                const PopupMenuItem<SelectedOptions>(
                   value: SelectedOptions.All,
-                  child: Text('All'),
+                  child: Text('Home'),
                 ),
                 const PopupMenuItem<SelectedOptions>(
                   value: SelectedOptions.Profile,
                   child: Text('Profile'),
+                ),
+                const PopupMenuItem<SelectedOptions>(
+                  value: SelectedOptions.Favorite,
+                  child: Text('Favourite'),
                 ),
                 const PopupMenuItem<SelectedOptions>(
                   value: SelectedOptions.Logout,

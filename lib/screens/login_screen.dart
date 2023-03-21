@@ -68,18 +68,27 @@ class _LoginScreenState extends State<LoginScreen> {
     var user = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Screen'),
+        title: const Text('Login'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const Chip(
-                label: Text('Online Book Ordering System'),
+              const Padding(
+                padding: EdgeInsets.only(top: 40),
+                child: Text(
+                  'Book Order',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 68, 16, 212),
+                  ),
+                ),
               ),
               const SizedBox(
-                height: 20,
+                height: 40,
               ),
               TextField(
                 controller: _emailController,

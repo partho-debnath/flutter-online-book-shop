@@ -44,7 +44,10 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   const Spacer(),
                   Chip(
-                    label: Text('${cart.totalAmount.toStringAsFixed(2)} Tk'),
+                    label: Text(
+                      '${cart.totalAmount.toStringAsFixed(2)} Tk',
+                      style: const TextStyle(color: Colors.white),
+                    ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
                   OderButton(userId: user.uID, cart: cart, context: context),
@@ -129,6 +132,9 @@ class _OderButtonState extends State<OderButton> {
                         hintText: 'Name',
                       ),
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextField(
                       controller: _addressController,
                       maxLines: 5,
@@ -137,6 +143,9 @@ class _OderButtonState extends State<OderButton> {
                         hintText:
                             'District Name:\nThana: \nBlock:\nRoadNo:\nHouseNo:',
                       ),
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     TextField(
                       controller: _phoneNoController,
