@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/product_providers.dart';
+import '../providers/product.dart';
 import '../providers/cart.dart';
 import './login_screen.dart';
+import './product_details_screen.dart';
 import './cart_screen.dart';
 import './user_profile_screen.dart';
 import '../widgets/product_gridView.dart';
@@ -55,14 +57,6 @@ class _NotesScreenState extends State<NotesScreen> {
   }
 
   @override
-  void initState() {
-    // Future.delayed(Duration.zero).then((_) {
-    //   Provider.of<ProductsProvider>(context).fetchProducts();
-    // });
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     if (isFirst == true) {
       Provider.of<ProductsProvider>(context).fetchProducts().then((_) {
@@ -82,6 +76,16 @@ class _NotesScreenState extends State<NotesScreen> {
       appBar: AppBar(
         title: const Text('Book Order'),
         actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate:
+                    CustomSearchDelegate(productsProvider: productProvider),
+              );
+            },
+            icon: const Icon(Icons.search),
+          ),
           Consumer<Cart>(
             builder: (cntxt, cartData, ch) => MyBadge(
               value: cartData.itemCount.toString(),
@@ -160,6 +164,80 @@ class _NotesScreenState extends State<NotesScreen> {
               },
               child: GridViewProducts(isFavorite: isFavorite),
             ),
+    );
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  ProductsProvider productsProvider;
+  CustomSearchDelegate({required this.productsProvider});
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+        },
+        icon: const Icon(Icons.clear),
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        close(context, null);
+      },
+      icon: const Icon(Icons.arrow_back),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    List<Product> matchProducts = [];
+    for (Product product in productsProvider.items) {
+      if (product.title.toLowerCase().contains(query.toLowerCase())) {
+        matchProducts.add(product);
+      }
+    }
+
+    return ListView.builder(
+      itemCount: matchProducts.length,
+      itemBuilder: (cntxt, index) => ListTile(
+        title: Text(matchProducts[index].title),
+        subtitle: Text(matchProducts[index].author),
+      ),
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List<Product> matchProducts = [];
+    for (var product in productsProvider.items) {
+      if (product.title.toLowerCase().contains(query.toLowerCase())) {
+        matchProducts.add(product);
+      }
+    }
+
+    return ListView.builder(
+      itemCount: matchProducts.length,
+      itemBuilder: (cntxt, index) => Card(
+        elevation: 5,
+        child: ListTile(
+          title: Text(matchProducts[index].title),
+          subtitle: Text(
+              'by: ${matchProducts[index].author}. ${matchProducts[index].edition} edition'),
+          trailing: Text('${matchProducts[index].price}'),
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              ProductDetailsScreen.nameRoute,
+              arguments: {'productId': matchProducts[index].id},
+            );
+          },
+        ),
+      ),
     );
   }
 }

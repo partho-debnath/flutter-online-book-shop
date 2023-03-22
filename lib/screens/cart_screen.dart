@@ -164,7 +164,7 @@ class _OderButtonState extends State<OderButton> {
                         String name = _nameController.text.trim();
                         String address = _addressController.text.trim();
                         String phone = _phoneNoController.text.trim();
-                        if (name != '' || address != '' || phone != '') {
+                        if (name != '' && address != '' && phone.length == 11) {
                           print(name + " " + address + " " + phone);
                           await Provider.of<Orders>(context, listen: false)
                               .addOrder(

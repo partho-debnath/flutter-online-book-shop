@@ -94,8 +94,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.email),
                   label: Text('E-mail'),
-                  hintText: 'Email',
+                  hintText: 'E-mail',
                 ),
               ),
               const SizedBox(
@@ -129,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () async {
                   final email = _emailController.text;
                   final password = _passwordController.text;
-                  if (email.length > 5 || password.length > 5) {
+                  if (email.length > 5 && password.length > 5) {
                     try {
                       final userCredential = await FirebaseAuth.instance
                           .signInWithEmailAndPassword(

@@ -56,7 +56,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     var user = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registration'),
+        title: const Text('Registration Screen'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 30),
@@ -84,10 +84,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   label: const Text('E-mail'),
-                  hintText: 'E-mail',
+                  hintText: 'Email',
                   errorText: _emailAlreadyExist == false
                       ? null
-                      : 'This Email is already in used.',
+                      : 'This Email already used',
                 ),
               ),
               const SizedBox(
@@ -101,7 +101,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   hintText: 'Password',
                   errorText: _passwordNotMatch == false
                       ? null
-                      : 'Password did not Match!',
+                      : 'Password did not Match.',
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
@@ -135,7 +135,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   hintText: 'Confirm Password',
                   errorText: _passwordNotMatch == false
                       ? null
-                      : 'Password did not Match!',
+                      : 'Password did not Match.',
                 ),
               ),
               const SizedBox(
@@ -171,6 +171,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         _emailAlreadyExist = false;
                         _passwordNotMatch = false;
                       });
+                      Future.delayed(const Duration(seconds: 0));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text(
+                            "Registration Complete, Now you can Login.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ));
+                      }
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'weak-password') {
                         debugPrint(
