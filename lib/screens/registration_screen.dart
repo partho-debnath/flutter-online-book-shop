@@ -144,8 +144,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ElevatedButton(
                 onPressed: () async {
                   final name = _nameController.text.trim();
-                  final email = _emailController.text;
-                  final password = _passwordController.text;
+                  final email = _emailController.text.trim();
+                  final password = _passwordController.text.trim();
                   final confirmPassword = _confirmPasswordController.text;
                   if (name.length <= 3) {
                     setState(() {
@@ -158,7 +158,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     });
                     return;
                   }
-                  if (email.length > 5 || password.length > 5) {
+                  if (email.length > 5 && password.length > 5) {
                     debugPrint('Register ok---------');
                     try {
                       var userCredential = await FirebaseAuth.instance
