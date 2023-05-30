@@ -1,7 +1,7 @@
 from django.db import models
+from django.utils.html import mark_safe
 
 # Create your models here.
-
 
 
 class Book(models.Model):
@@ -13,6 +13,9 @@ class Book(models.Model):
     image2 = models.ImageField(upload_to='books')
     description = models.TextField(blank=False, null=False)
     price = models.IntegerField(default=0)
+
+    def cover_imgage_preview(self):
+        return mark_safe(f'<img src = "{self.cover.url}" width = "30"/>')
 
     def __str__(self):
         return f"Name: {self.name[:20].title()}, Edition: {self.edition}"
