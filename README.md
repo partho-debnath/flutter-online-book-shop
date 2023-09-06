@@ -1,4 +1,5 @@
-# Flutter Firebase Authentication
+# Online Book Shop 
+## Flutter Firebase Authentication
 
 [Flutter Firebase Setup Using Firebase CLI](https://firebase.flutter.dev/docs/overview/)
 
